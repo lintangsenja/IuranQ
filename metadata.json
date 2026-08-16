@@ -1,0 +1,7 @@
+{
+  "name": "IuranQ",
+  "description": "Aplikasi Manajemen Keuangan Komunitas & Kas Warga RT 1 RW 3 Desa Purbayasa dengan QR Scanner, Multi-Kamar Kas, dan Ekspor Laporan Presisi",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
