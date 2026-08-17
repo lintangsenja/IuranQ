@@ -128,7 +128,9 @@ fun WargaScreen(
                     },
                     containerColor = IndigoPrimary,
                     contentColor = Color.White,
-                    modifier = Modifier.testTag("fab_tambah_warga")
+                    modifier = Modifier
+                        .padding(bottom = 72.dp)
+                        .testTag("fab_tambah_warga")
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp),

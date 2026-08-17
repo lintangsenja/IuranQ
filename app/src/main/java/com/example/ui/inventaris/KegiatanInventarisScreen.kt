@@ -104,7 +104,9 @@ fun KegiatanInventarisScreen(
                     onClick = { showAddEventDialog = true },
                     containerColor = IndigoPrimary,
                     contentColor = Color.White,
-                    modifier = Modifier.testTag("fab_tambah_kegiatan")
+                    modifier = Modifier
+                        .padding(bottom = 72.dp)
+                        .testTag("fab_tambah_kegiatan")
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 16.dp),

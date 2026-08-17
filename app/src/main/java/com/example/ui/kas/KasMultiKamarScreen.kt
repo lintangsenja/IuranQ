@@ -122,6 +122,7 @@ fun KasMultiKamarScreen(
                     contentColor = Color.White,
                     shape = CircleShape,
                     modifier = Modifier
+                        .padding(bottom = 72.dp)
                         .size(48.dp)
                         .testTag("fab_tambah_mutasi")
                 ) {

@@ -35,13 +35,13 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.LocalAtm
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Savings
 import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
+import com.example.ui.theme.LivestockKurban
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -337,7 +337,7 @@ fun DashboardScreen(
                     label = "Kurban",
                     iconColor = Color(0xFF10B981),
                     iconBgColor = Color(0xFFD1FAE5),
-                    icon = Icons.Default.Pets,
+                    icon = LivestockKurban,
                     modifier = Modifier.weight(1f).testTag("action_kurban")
                 ) {
                     viewModel.switchTab(MainTab.KURBAN)

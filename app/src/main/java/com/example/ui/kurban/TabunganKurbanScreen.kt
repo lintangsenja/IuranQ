@@ -24,8 +24,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Payments
-import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.Send
+import com.example.ui.theme.LivestockKurban
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -106,7 +106,7 @@ fun TabunganKurbanScreen(
                 ) {
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Pets, contentDescription = null, tint = Color(0xFFFBBF24), modifier = Modifier.size(24.dp))
+                            Icon(LivestockKurban, contentDescription = null, tint = Color(0xFFFBBF24), modifier = Modifier.size(24.dp))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "Tabungan Kurban 1447 H",

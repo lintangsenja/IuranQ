@@ -134,3 +134,55 @@ data class PetugasEntity(
     val isDefaultAktif: Boolean = false,
     val isDeleted: Boolean = false
 )
+
+@Entity(tableName = "master_jabatan")
+data class JabatanEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val namaJabatan: String,
+    val deskripsi: String = "",
+    val levelAkses: String = "ADMIN_PENGURUS", // SUPER_ADMIN, ADMIN_PENGURUS, WARGA
+    val urutan: Int = 1,
+    val isDeleted: Boolean = false
+)
+
+@Entity(tableName = "profil_pengurus")
+data class PengurusEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val nama: String,
+    val jabatan: String, // Dynamic from Master Jabatan
+    val noWa: String,
+    val fotoAvatar: String = "avatar_1", // avatar id or photo uri
+    val email: String = "",
+    val catatan: String = "",
+    val isUtama: Boolean = false,
+    val isDeleted: Boolean = false
+)
+
+@Entity(tableName = "backup_history")
+data class BackupHistoryEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val fileName: String,
+    val fileSizeFormatted: String,
+    val totalRecords: Int,
+    val status: String = "BERHASIL",
+    val jsonContent: String = "",
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "user_account")
+data class UserAccountEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val username: String,
+    val namaLengkap: String,
+    val role: String = "ADMIN_PENGURUS", // SUPER_ADMIN, ADMIN_PENGURUS, WARGA
+    val noWa: String = "",
+    val pinPassword: String = "123456",
+    val wargaId: String? = null,
+    val isAktif: Boolean = true,
+    val createdAt: Long = System.currentTimeMillis()
+)
+

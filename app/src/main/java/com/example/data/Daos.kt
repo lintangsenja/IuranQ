@@ -195,3 +195,70 @@ interface PetugasDao {
     @Query("UPDATE petugas SET isDeleted = 1 WHERE id = :id")
     suspend fun deletePetugas(id: Long)
 }
+
+@Dao
+interface JabatanDao {
+    @Query("SELECT * FROM master_jabatan WHERE isDeleted = 0 ORDER BY urutan ASC, namaJabatan ASC")
+    fun getAllJabatan(): Flow<List<JabatanEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertJabatan(jabatan: JabatanEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllJabatan(list: List<JabatanEntity>)
+
+    @Update
+    suspend fun updateJabatan(jabatan: JabatanEntity)
+
+    @Query("UPDATE master_jabatan SET isDeleted = 1 WHERE id = :id")
+    suspend fun deleteJabatan(id: Long)
+}
+
+@Dao
+interface PengurusDao {
+    @Query("SELECT * FROM profil_pengurus WHERE isDeleted = 0 ORDER BY isUtama DESC, id ASC")
+    fun getAllPengurus(): Flow<List<PengurusEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPengurus(pengurus: PengurusEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllPengurus(list: List<PengurusEntity>)
+
+    @Update
+    suspend fun updatePengurus(pengurus: PengurusEntity)
+
+    @Query("UPDATE profil_pengurus SET isDeleted = 1 WHERE id = :id")
+    suspend fun deletePengurus(id: Long)
+}
+
+@Dao
+interface BackupHistoryDao {
+    @Query("SELECT * FROM backup_history ORDER BY createdAt DESC")
+    fun getAllBackupHistory(): Flow<List<BackupHistoryEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBackupHistory(item: BackupHistoryEntity): Long
+
+    @Query("DELETE FROM backup_history WHERE id = :id")
+    suspend fun deleteBackupHistory(id: Long)
+}
+
+@Dao
+interface UserAccountDao {
+    @Query("SELECT * FROM user_account ORDER BY id ASC")
+    fun getAllUsers(): Flow<List<UserAccountEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUser(user: UserAccountEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllUsers(list: List<UserAccountEntity>)
+
+    @Update
+    suspend fun updateUser(user: UserAccountEntity)
+
+    @Query("DELETE FROM user_account WHERE id = :id")
+    suspend fun deleteUser(id: Long)
+}
+

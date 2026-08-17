@@ -20,9 +20,13 @@ import kotlinx.coroutines.launch
         KegiatanRtEntity::class,
         AuditLogEntity::class,
         AppConfigEntity::class,
-        PetugasEntity::class
+        PetugasEntity::class,
+        JabatanEntity::class,
+        PengurusEntity::class,
+        BackupHistoryEntity::class,
+        UserAccountEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -36,6 +40,10 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun auditLogDao(): AuditLogDao
     abstract fun appConfigDao(): AppConfigDao
     abstract fun petugasDao(): PetugasDao
+    abstract fun jabatanDao(): JabatanDao
+    abstract fun pengurusDao(): PengurusDao
+    abstract fun backupHistoryDao(): BackupHistoryDao
+    abstract fun userAccountDao(): UserAccountDao
 
     companion object {
         @Volatile
@@ -369,6 +377,49 @@ abstract class AppDatabase : RoomDatabase() {
                 )
             )
             db.transaksiDao().insertAllTransaksi(sampleTrans)
+
+            // Seed Master Data Jabatan
+            val defaultJabatan = listOf(
+                JabatanEntity(namaJabatan = "Super Admin RT", deskripsi = "Penanggung jawab utama sistem & IT RT", levelAkses = "SUPER_ADMIN", urutan = 1),
+                JabatanEntity(namaJabatan = "Ketua RW 03", deskripsi = "Pimpinan wilayah RW 03 Purbayasa", levelAkses = "ADMIN_PENGURUS", urutan = 2),
+                JabatanEntity(namaJabatan = "Ketua RT 01", deskripsi = "Pimpinan warga & pengambil kebijakan RT 01", levelAkses = "ADMIN_PENGURUS", urutan = 3),
+                JabatanEntity(namaJabatan = "Bendahara Umum RT", deskripsi = "Pengelola mutasi kas & pembukuan", levelAkses = "ADMIN_PENGURUS", urutan = 4),
+                JabatanEntity(namaJabatan = "Sekretaris RT", deskripsi = "Pencatatan data warga & surat menyurat", levelAkses = "ADMIN_PENGURUS", urutan = 5),
+                JabatanEntity(namaJabatan = "Seksi Keamanan / Piket Ronda", deskripsi = "Koordinator ronda malam & jimpitan", levelAkses = "ADMIN_PENGURUS", urutan = 6),
+                JabatanEntity(namaJabatan = "Seksi Kerohanian & Kurban", deskripsi = "Pengelola tabungan kurban & ibadah", levelAkses = "ADMIN_PENGURUS", urutan = 7),
+                JabatanEntity(namaJabatan = "Seksi Sosial & Mardilayon", deskripsi = "Santunan dhuafa & rukun kematian", levelAkses = "ADMIN_PENGURUS", urutan = 8),
+                JabatanEntity(namaJabatan = "Seksi Pengelola Air Bersih", deskripsi = "Pencatatan iuran & meteran air warga", levelAkses = "ADMIN_PENGURUS", urutan = 9)
+            )
+            db.jabatanDao().insertAllJabatan(defaultJabatan)
+
+            // Seed Profil Pengurus
+            val defaultPengurus = listOf(
+                PengurusEntity(nama = "H. Supriyanto, S.Pd", jabatan = "Ketua RT 01", noWa = "081234567890", fotoAvatar = "avatar_1", email = "rt01.purbayasa@gmail.com", catatan = "Periode 2024-2029", isUtama = true),
+                PengurusEntity(nama = "Drs. H. Mulyono", jabatan = "Ketua RW 03", noWa = "081398765432", fotoAvatar = "avatar_2", email = "rw03.purbayasa@gmail.com", catatan = "Pembina Wilayah", isUtama = true),
+                PengurusEntity(nama = "Hj. Endang Tri Wahyuni", jabatan = "Bendahara Umum RT", noWa = "081543219876", fotoAvatar = "avatar_3", email = "bendahara.rt01@gmail.com", catatan = "Pengelola Kas Utama", isUtama = true),
+                PengurusEntity(nama = "Ahmad Fajar, S.Kom", jabatan = "Super Admin RT", noWa = "085712345678", fotoAvatar = "avatar_4", email = "admin.iuranq@gmail.com", catatan = "Administrator Sistem & Keamanan", isUtama = true)
+            )
+            db.pengurusDao().insertAllPengurus(defaultPengurus)
+
+            // Seed User Accounts (3 Roles)
+            val defaultUsers = listOf(
+                UserAccountEntity(username = "admin_super", namaLengkap = "Ahmad Fajar (Admin IT)", role = "SUPER_ADMIN", noWa = "085712345678", pinPassword = "123", isAktif = true),
+                UserAccountEntity(username = "rt01_ketua", namaLengkap = "H. Supriyanto (Ketua RT)", role = "ADMIN_PENGURUS", noWa = "081234567890", pinPassword = "123", isAktif = true),
+                UserAccountEntity(username = "bendahara_rt", namaLengkap = "Hj. Endang Tri Wahyuni", role = "ADMIN_PENGURUS", noWa = "081543219876", pinPassword = "123", isAktif = true),
+                UserAccountEntity(username = "bambang_s", namaLengkap = "Bambang Santoso", role = "WARGA", wargaId = "WRG-001", noWa = "081234567890", pinPassword = "123", isAktif = true)
+            )
+            db.userAccountDao().insertAllUsers(defaultUsers)
+
+            // Seed Initial Backup Record
+            db.backupHistoryDao().insertBackupHistory(
+                BackupHistoryEntity(
+                    fileName = "backup_iuranq_initial_auto.json",
+                    fileSizeFormatted = "28.5 KB",
+                    totalRecords = 35,
+                    status = "BERHASIL",
+                    jsonContent = """{"appName":"IuranQ","version":"1.0","community":"RT 01 RW 03 Desa Purbayasa"}"""
+                )
+            )
 
             db.auditLogDao().insertAuditLog(
                 AuditLogEntity(

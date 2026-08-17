@@ -32,16 +32,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.Badge
+import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Inventory2
+import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.People
-import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SupervisorAccount
+import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
@@ -83,11 +87,17 @@ import com.example.ui.jimpitan.JimpitanTabunganScreen
 import com.example.ui.kas.KasMultiKamarScreen
 import com.example.ui.kurban.TabunganKurbanScreen
 import com.example.ui.laporan.LaporanAuditScreen
+import com.example.ui.menu.BackupRestoreScreen
+import com.example.ui.menu.ManajemenPenggunaScreen
+import com.example.ui.menu.MasterJabatanScreen
+import com.example.ui.menu.MenuUtamaScreen
+import com.example.ui.menu.ProfilPengurusScreen
 import com.example.ui.piket.QrPiketScreen
 import com.example.ui.theme.EmeraldSuccess
 import com.example.ui.theme.HeroGradient
 import com.example.ui.theme.IndigoPrimary
 import com.example.ui.theme.LightBg
+import com.example.ui.theme.LivestockKurban
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.warga.WargaScreen
 
@@ -146,6 +156,11 @@ fun IuranQApp(viewModel: IuranQViewModel) {
                     MainTab.KURBAN -> TabunganKurbanScreen(viewModel = viewModel)
                     MainTab.KEGIATAN_INVENTARIS -> KegiatanInventarisScreen(viewModel = viewModel)
                     MainTab.LAPORAN -> LaporanAuditScreen(viewModel = viewModel)
+                    MainTab.MENU_PENGATURAN -> MenuUtamaScreen(viewModel = viewModel)
+                    MainTab.BACKUP_RESTORE -> BackupRestoreScreen(viewModel = viewModel)
+                    MainTab.PROFIL_PENGURUS -> ProfilPengurusScreen(viewModel = viewModel)
+                    MainTab.MASTER_JABATAN -> MasterJabatanScreen(viewModel = viewModel)
+                    MainTab.MANAJEMEN_USER -> ManajemenPenggunaScreen(viewModel = viewModel)
                 }
             }
 
@@ -230,29 +245,132 @@ fun IuranQApp(viewModel: IuranQViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp, vertical = 12.dp)
-                    .padding(bottom = 32.dp)
+                    .padding(bottom = 36.dp)
             ) {
-                Text(
-                    text = "Menu Lengkap IuranQ",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B)
-                )
-                Text(
-                    text = "Kelola seluruh keuangan & kegiatan RT 01 RW 03",
-                    fontSize = 12.sp,
-                    color = Color(0xFF64748B)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Menu & Pengaturan IuranQ",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1E293B)
+                        )
+                        Text(
+                            text = "Kelola seluruh modul, profil, dan data RT 01 RW 03",
+                            fontSize = 12.sp,
+                            color = Color(0xFF64748B)
+                        )
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color(0xFFEEF2FF),
+                        modifier = Modifier.clickable {
+                            viewModel.switchTab(MainTab.MENU_PENGATURAN)
+                            showMenuSheet = false
+                        }
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.Settings, contentDescription = null, tint = IndigoPrimary, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Buka Hub", fontSize = 11.5.sp, fontWeight = FontWeight.Bold, color = IndigoPrimary)
+                        }
+                    }
+                }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Section: Pengaturan & Master
+                Text(
+                    text = "PENGATURAN & MASTER DATA",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF64748B),
+                    letterSpacing = 0.6.sp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    MenuTile(
+                        title = "Backup & Restore",
+                        subtitle = "Ekspor/Impor .json",
+                        icon = Icons.Default.Backup,
+                        color = Color(0xFF4F46E5),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        viewModel.switchTab(MainTab.BACKUP_RESTORE)
+                        showMenuSheet = false
+                    }
+
+                    MenuTile(
+                        title = "Profil Pengurus",
+                        subtitle = "Struktur & WA RT",
+                        icon = Icons.Default.Badge,
+                        color = Color(0xFF059669),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        viewModel.switchTab(MainTab.PROFIL_PENGURUS)
+                        showMenuSheet = false
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    MenuTile(
+                        title = "Master Jabatan",
+                        subtitle = "Jabatan Dinamis",
+                        icon = Icons.Default.Work,
+                        color = Color(0xFFD97706),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        viewModel.switchTab(MainTab.MASTER_JABATAN)
+                        showMenuSheet = false
+                    }
+
+                    MenuTile(
+                        title = "Manajemen Pengguna",
+                        subtitle = "3 Tingkat Role",
+                        icon = Icons.Default.ManageAccounts,
+                        color = Color(0xFF7C3AED),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        viewModel.switchTab(MainTab.MANAJEMEN_USER)
+                        showMenuSheet = false
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Section: Modul Operasional RT
+                Text(
+                    text = "MODUL OPERASIONAL RT",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF64748B),
+                    letterSpacing = 0.6.sp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     MenuTile(
                         title = "Data Warga",
-                        subtitle = "Daftar KK, NIK & Status Air",
+                        subtitle = "Daftar KK & NIK",
                         icon = Icons.Default.People,
                         color = Color(0xFF6366F1),
                         modifier = Modifier.weight(1f)
@@ -263,7 +381,7 @@ fun IuranQApp(viewModel: IuranQViewModel) {
 
                     MenuTile(
                         title = "Kamar Kas",
-                        subtitle = "Multi-Kamar & Mutasi",
+                        subtitle = "Multi-Kamar Kas",
                         icon = Icons.Default.AccountBalanceWallet,
                         color = Color(0xFF3B82F6),
                         modifier = Modifier.weight(1f)
@@ -273,17 +391,17 @@ fun IuranQApp(viewModel: IuranQViewModel) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     MenuTile(
                         title = "Tabungan Kurban",
                         subtitle = "Kelompok 7 Org/Sapi",
-                        icon = Icons.Default.Pets,
-                        color = Color(0xFF10B981),
+                        icon = LivestockKurban,
+                        color = Color(0xFFD97706),
                         modifier = Modifier.weight(1f)
                     ) {
                         viewModel.switchTab(MainTab.KURBAN)
@@ -302,11 +420,11 @@ fun IuranQApp(viewModel: IuranQViewModel) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     MenuTile(
                         title = "Laporan & Audit",
@@ -321,7 +439,7 @@ fun IuranQApp(viewModel: IuranQViewModel) {
 
                     MenuTile(
                         title = "Manajemen QR & Piket",
-                        subtitle = "Scan, Buat QR & Petugas",
+                        subtitle = "Scan & Jadwal Ronda",
                         icon = Icons.Default.QrCodeScanner,
                         color = Color(0xFFEC4899),
                         modifier = Modifier.weight(1f)
@@ -341,6 +459,16 @@ fun VibrantBottomBar(
     onTabSelected: (MainTab) -> Unit,
     onMenuClick: () -> Unit
 ) {
+    val isMenuSelected = currentTab == MainTab.MENU_PENGATURAN ||
+            currentTab == MainTab.BACKUP_RESTORE ||
+            currentTab == MainTab.PROFIL_PENGURUS ||
+            currentTab == MainTab.MASTER_JABATAN ||
+            currentTab == MainTab.MANAJEMEN_USER ||
+            currentTab == MainTab.LAPORAN ||
+            currentTab == MainTab.KEGIATAN_INVENTARIS ||
+            currentTab == MainTab.KURBAN ||
+            currentTab == MainTab.WARGA
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -398,12 +526,12 @@ fun VibrantBottomBar(
                     modifier = Modifier.weight(1f)
                 )
 
-                // Tab 5: Menu / Laporan
+                // Tab 5: Menu / Pengaturan
                 VibrantNavItem(
                     label = "Menu",
                     icon = Icons.Default.GridView,
-                    isSelected = currentTab == MainTab.LAPORAN || currentTab == MainTab.KEGIATAN_INVENTARIS || currentTab == MainTab.KURBAN || currentTab == MainTab.WARGA,
-                    onClick = onMenuClick,
+                    isSelected = isMenuSelected,
+                    onClick = { onTabSelected(MainTab.MENU_PENGATURAN) },
                     modifier = Modifier.weight(1f)
                 )
             }

@@ -5,12 +5,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.AnggotaKurbanEntity
 import com.example.data.AppDatabase
+import com.example.data.BackupHistoryEntity
 import com.example.data.InventarisEntity
 import com.example.data.IuranQRepository
+import com.example.data.JabatanEntity
 import com.example.data.KamarKasEntity
 import com.example.data.KelompokKurbanEntity
+import com.example.data.PengurusEntity
 import com.example.data.PetugasEntity
 import com.example.data.TransaksiEntity
+import com.example.data.UserAccountEntity
 import com.example.data.WargaEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,11 +23,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-enum class UserRole(val label: String, val subtitle: String) {
-    SUPER_ADMIN("Super Admin", "Hak Akses Penuh"),
-    BENDAHARA("Bendahara RT", "Input & Mutasi Kas"),
-    PETUGAS_LAPANGAN("Petugas Piket", "Scan QR & Input"),
-    WARGA("Warga RT 01", "Transparansi & Cek Saldo")
+enum class UserRole(val label: String, val subtitle: String, val code: String) {
+    SUPER_ADMIN("Super Admin", "Akses Penuh Sistem & Master Data", "SUPER_ADMIN"),
+    ADMIN_PENGURUS("Admin RT/RW/Bendahara", "Akses Operasional Keuangan & Warga", "ADMIN_PENGURUS"),
+    WARGA("Warga RT 01", "Akses Mandiri & Transparansi Saldo", "WARGA")
 }
 
 enum class MainTab(val title: String) {
@@ -34,7 +37,12 @@ enum class MainTab(val title: String) {
     WARGA("Data Warga"),
     KURBAN("Kurban"),
     KEGIATAN_INVENTARIS("Kegiatan & Aset"),
-    LAPORAN("Laporan & Audit")
+    LAPORAN("Laporan & Audit"),
+    MENU_PENGATURAN("Menu & Pengaturan"),
+    BACKUP_RESTORE("Backup & Restore"),
+    PROFIL_PENGURUS("Profil Pengurus"),
+    MASTER_JABATAN("Master Jabatan"),
+    MANAJEMEN_USER("Manajemen Pengguna")
 }
 
 data class ScannerPaymentDialogState(
@@ -75,6 +83,10 @@ class IuranQViewModel(application: Application) : AndroidViewModel(application) 
     val kegiatanList = repository.allKegiatan.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val auditLogList = repository.allAuditLogs.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val petugasList = repository.allPetugas.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val jabatanList = repository.allJabatan.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val pengurusList = repository.allPengurus.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val backupHistoryList = repository.allBackupHistory.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val userAccountList = repository.allUsers.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
     val unsyncedCount = repository.unsyncedCount.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     fun switchRole(role: UserRole) {
@@ -277,4 +289,71 @@ class IuranQViewModel(application: Application) : AndroidViewModel(application) 
             repository.tambahAnggotaKurban(anggota, _currentRole.value.label)
         }
     }
+
+    // Master Jabatan CRUD
+    fun simpanJabatan(jabatan: JabatanEntity, isNew: Boolean) {
+        viewModelScope.launch {
+            repository.simpanJabatan(jabatan, isNew, _currentRole.value.label)
+        }
+    }
+
+    fun hapusJabatan(id: Long) {
+        viewModelScope.launch {
+            repository.hapusJabatan(id, _currentRole.value.label)
+        }
+    }
+
+    // Profil Pengurus CRUD
+    fun simpanPengurus(pengurus: PengurusEntity, isNew: Boolean) {
+        viewModelScope.launch {
+            repository.simpanPengurus(pengurus, isNew, _currentRole.value.label)
+        }
+    }
+
+    fun hapusPengurus(id: Long) {
+        viewModelScope.launch {
+            repository.hapusPengurus(id, _currentRole.value.label)
+        }
+    }
+
+    // User Account CRUD (3 Roles)
+    fun simpanUserAccount(user: UserAccountEntity, isNew: Boolean) {
+        viewModelScope.launch {
+            repository.simpanUser(user, isNew, _currentRole.value.label)
+        }
+    }
+
+    fun hapusUserAccount(id: Long) {
+        viewModelScope.launch {
+            repository.hapusUser(id, _currentRole.value.label)
+        }
+    }
+
+    // Backup & Restore Engine
+    fun generateBackupJson(onDone: (jsonString: String, totalRecords: Int) -> Unit) {
+        viewModelScope.launch {
+            val (json, count) = repository.exportCompleteDatabaseJson()
+            onDone(json, count)
+        }
+    }
+
+    fun saveBackupHistoryRecord(fileName: String, fileSizeFormatted: String, totalRecords: Int, jsonContent: String) {
+        viewModelScope.launch {
+            repository.simpanBackupHistory(fileName, fileSizeFormatted, totalRecords, jsonContent)
+        }
+    }
+
+    fun restoreBackupFromJson(jsonString: String, onDone: (restoredCount: Int) -> Unit) {
+        viewModelScope.launch {
+            val count = repository.restoreDatabaseFromJson(jsonString, _currentRole.value.label)
+            onDone(count)
+        }
+    }
+
+    fun hapusBackupHistory(id: Long) {
+        viewModelScope.launch {
+            repository.hapusBackupHistory(id)
+        }
+    }
 }
+

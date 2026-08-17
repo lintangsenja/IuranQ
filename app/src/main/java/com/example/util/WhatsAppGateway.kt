@@ -146,6 +146,10 @@ _Semoga dimudahkan dalam menunaikan ibadah kurban tahun ini._
         """.trimIndent()
     }
 
+    fun openWhatsAppChat(context: Context, rawPhoneNumber: String, message: String = "") {
+        sendWhatsApp(context, rawPhoneNumber, message)
+    }
+
     fun sendWhatsApp(context: Context, rawPhoneNumber: String, message: String) {
         try {
             var formattedPhone = rawPhoneNumber.replace(Regex("[^0-9]"), "")
