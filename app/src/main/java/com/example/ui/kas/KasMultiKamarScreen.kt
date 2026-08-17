@@ -8,13 +8,16 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -110,53 +113,80 @@ fun KasMultiKamarScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         floatingActionButton = {
             if (currentRole != com.example.ui.UserRole.WARGA) {
                 FloatingActionButton(
                     onClick = { showMutasiDialog = true },
                     containerColor = IndigoPrimary,
                     contentColor = Color.White,
-                    modifier = Modifier.testTag("fab_tambah_mutasi")
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .testTag("fab_tambah_mutasi")
                 ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = "Tambah Mutasi")
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Input Mutasi", fontWeight = FontWeight.Bold)
-                    }
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Input Mutasi",
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             }
         }
-    ) { innerPadding ->
+    ) { _ ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF8FAFC))
-                .padding(innerPadding)
-                .padding(bottom = 80.dp)
+                .background(Color(0xFFF8FAFC)),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            // Header
+            // Header with minimalist Add Icon on Top-Right
             item {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(HeroGradient)
-                        .padding(20.dp)
+                        .statusBarsPadding()
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
                 ) {
-                    Column {
-                        Text(
-                            text = "Multi-Kamar Kas Berelasi",
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "Sistem pembagian kamar kas transparan RT 01 RW 03 Desa Purbayasa",
-                            color = Color(0xFFCBD5E1),
-                            fontSize = 12.5.sp
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
+                            Text(
+                                text = "Multi-Kamar Kas Berelasi",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Text(
+                                text = "Sistem pembagian kamar kas transparan RT 01 RW 03 Desa Purbayasa",
+                                color = Color(0xFFCBD5E1),
+                                fontSize = 12.sp
+                            )
+                        }
+
+                        if (currentRole != com.example.ui.UserRole.WARGA) {
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.25f))
+                                    .border(1.dp, Color.White.copy(alpha = 0.4f), CircleShape)
+                                    .clickable { showMutasiDialog = true }
+                                    .testTag("header_add_mutasi_btn"),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Input Mutasi",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -294,13 +324,46 @@ fun KasMultiKamarScreen(
 
             // Section: Daftar Mutasi Transaksi
             item {
-                Text(
-                    text = "Riwayat Mutasi & Pembukuan Kas",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0F172A),
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Riwayat Mutasi & Pembukuan Kas",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF0F172A)
+                        )
+                        Text(
+                            text = "Pencatatan kas masuk dan kas keluar",
+                            fontSize = 11.5.sp,
+                            color = Color(0xFF64748B)
+                        )
+                    }
+
+                    if (currentRole != com.example.ui.UserRole.WARGA) {
+                        Box(
+                            modifier = Modifier
+                                .size(34.dp)
+                                .clip(CircleShape)
+                                .background(IndigoPrimary)
+                                .clickable { showMutasiDialog = true }
+                                .testTag("btn_input_mutasi_icon"),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Input Mutasi",
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                }
             }
 
             val filteredTrans = if (selectedKasId == "ALL") {

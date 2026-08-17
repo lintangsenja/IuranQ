@@ -17,12 +17,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -114,6 +117,7 @@ fun IuranQApp(viewModel: IuranQViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             VibrantBottomBar(
                 currentTab = currentTab,
@@ -126,7 +130,7 @@ fun IuranQApp(viewModel: IuranQViewModel) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(LightBg)
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding())
         ) {
             AnimatedContent(
                 targetState = currentTab,
@@ -149,7 +153,8 @@ fun IuranQApp(viewModel: IuranQViewModel) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 12.dp, end = 16.dp)
+                    .statusBarsPadding()
+                    .padding(top = 10.dp, end = 16.dp)
             ) {
                 Surface(
                     shape = RoundedCornerShape(20.dp),
@@ -339,25 +344,27 @@ fun VibrantBottomBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(horizontal = 12.dp, vertical = 6.dp)
             .background(Color.Transparent)
     ) {
-        // Bottom Bar Background Card
+        // Bottom Bar Background Card (Super Slim & Compact: 56dp)
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(76.dp)
+                .height(56.dp)
                 .shadow(
-                    elevation = 16.dp,
-                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                    spotColor = Color(0x1A000000)
+                    elevation = 10.dp,
+                    shape = RoundedCornerShape(18.dp),
+                    spotColor = Color(0x20000000)
                 ),
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+            shape = RoundedCornerShape(18.dp),
             color = Color.White
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -380,7 +387,7 @@ fun VibrantBottomBar(
                 )
 
                 // Center Spacer for Raised FAB
-                Spacer(modifier = Modifier.width(64.dp))
+                Spacer(modifier = Modifier.width(46.dp))
 
                 // Tab 4: Kas RT / Air
                 VibrantNavItem(
@@ -402,14 +409,14 @@ fun VibrantBottomBar(
             }
         }
 
-        // Center Raised Floating Action Button for Quick QR & Piket Scanner
+        // Center Raised Floating Action Button for Quick QR & Piket Scanner (Slim Proportional: 46dp)
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .offset(y = (-18).dp)
-                .size(62.dp)
+                .offset(y = (-10).dp)
+                .size(46.dp)
                 .clip(CircleShape)
-                .border(4.dp, LightBg, CircleShape)
+                .border(3.dp, Color.White, CircleShape)
                 .background(HeroGradient)
                 .clickable { onTabSelected(MainTab.QR_PIKET) }
                 .testTag("center_scan_fab"),
@@ -419,7 +426,7 @@ fun VibrantBottomBar(
                 imageVector = Icons.Default.QrCodeScanner,
                 contentDescription = "Manajemen QR & Piket",
                 tint = Color.White,
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(20.dp)
             )
         }
     }
@@ -435,16 +442,16 @@ fun VibrantNavItem(
 ) {
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick)
-            .padding(vertical = 6.dp),
+            .padding(vertical = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         if (isSelected) {
             Box(
                 modifier = Modifier
-                    .size(28.dp)
+                    .size(22.dp)
                     .clip(CircleShape)
                     .background(Color(0xFF6366F1).copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
@@ -453,25 +460,26 @@ fun VibrantNavItem(
                     imageVector = icon,
                     contentDescription = label,
                     tint = IndigoPrimary,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(15.dp)
                 )
             }
         } else {
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                tint = Color(0xFF64748B).copy(alpha = 0.6f),
-                modifier = Modifier.size(22.dp)
+                tint = Color(0xFF64748B).copy(alpha = 0.65f),
+                modifier = Modifier.size(17.dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(3.dp))
+        Spacer(modifier = Modifier.height(1.dp))
 
         Text(
             text = label,
-            fontSize = 10.sp,
+            fontSize = 9.5.sp,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-            color = if (isSelected) IndigoPrimary else Color(0xFF64748B).copy(alpha = 0.7f)
+            color = if (isSelected) IndigoPrimary else Color(0xFF64748B).copy(alpha = 0.8f),
+            maxLines = 1
         )
     }
 }
